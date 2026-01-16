@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "client_name",
+    "invoice_id",
+    "invoice_amount",
+    "invoice_issue_date",
+    "days_overdue",
+    "relationship_tag"
+  ],
+  "properties": {
+    "client_name": { "type": "string", "minLength": 1 },
+    "invoice_id": { "type": "string", "minLength": 1 },
+    "invoice_amount": { "type": "number", "minimum": 0 },
+    "currency": { "type": "string", "default": "USD" },
+    "invoice_issue_date": { "type": "string", "format": "date" },
+    "days_overdue": { "type": "integer", "minimum": 0 },
+    "last_followup_date": { "type": ["string", "null"], "format": "date" },
+    "relationship_tag": { "enum": ["new", "recurring", "vip", "risky"] },
+    "notes": { "type": "string", "default": "" }
+  }
+}

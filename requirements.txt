@@ -1,0 +1,11 @@
+langchain
+langchain-core
+langchain-openai
+python-dotenv
+pydantic
+pandas
+openpyxl
+jsonschema
+typer
+rich
+tenacity
