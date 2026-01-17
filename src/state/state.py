@@ -19,6 +19,7 @@ class InvoiceContext(BaseModel):
     relationship_summary: str
     invoice_status_summary: str
     days_since_last_followup: Optional[int] = None
+    context_summary: str
 
 class FollowupDecision(BaseModel):
     followup_required: bool
@@ -37,5 +38,3 @@ class FollowupState(TypedDict, total=False):
     context: InvoiceContext
     decision: FollowupDecision
     message: FollowupMessage
-
-
