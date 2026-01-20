@@ -47,3 +47,15 @@ TONE_PREFERENCE_BY_RELATIONSHIP = {
     "recurring": "neutral",
     "risky": "firm",
 }
+
+LLM_MESSAGE_MODEL = "gpt-4o"
+LLM_MESSAGE_TEMPERATURE = 0.2
+LLM_MESSAGE_MAX_RETRIES = 3
+LLM_MESSAGE_BACKOFF_MIN_SECONDS = 1
+LLM_MESSAGE_BACKOFF_MAX_SECONDS = 8
+
+ESCALATION_THRESHOLDS = {
+    "urgent_days_overdue": FOLLOWUP_TIMING_RULES["urgent_days_overdue"],
+    "standard_days_overdue": FOLLOWUP_TIMING_RULES["standard_days_overdue"],
+    "min_days_between_followups": FOLLOWUP_TIMING_RULES["min_days_between_followups"],
+}

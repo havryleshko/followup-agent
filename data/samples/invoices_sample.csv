@@ -1,0 +1,7 @@
+client_name,invoice_id,invoice_amount,currency,invoice_issue_date,days_overdue,last_followup_date,relationship_tag,notes
+Northwind Partners,VIP-001,15000,USD,2024-12-01,12,,vip,Priority account - keep tone respectful.
+Fresh Start LLC,NEW-101,800,,2025-01-05,5,,new,Promised to pay next week.
+Global Manufacturing,REC-550,50000,USD,2024-11-15,8,2025-01-05,recurring,
+HighRisk Supply,RISK-777,1200,USD,2024-10-01,65,2024-12-01,risky,Overdue and ignored reminders.
+Evergreen Retail,REC-221,3200,USD,2024-12-20,20,,recurring,No prior follow-up recorded.
+Summit Advisors,VIP-204,2500,USD,2024-12-28,35,2025-01-02,vip,Client asked to resolve a billing issue.
