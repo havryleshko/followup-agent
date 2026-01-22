@@ -59,3 +59,51 @@ ESCALATION_THRESHOLDS = {
     "standard_days_overdue": FOLLOWUP_TIMING_RULES["standard_days_overdue"],
     "min_days_between_followups": FOLLOWUP_TIMING_RULES["min_days_between_followups"],
 }
+
+CONTROL_REQUIRED_DECISION_FIELDS = [
+    "followup_required",
+    "recommended_timing",
+    "tone",
+    "explanation",
+]
+
+CONTROL_REQUIRED_MESSAGE_FIELDS = ["subject", "body", "reasoning"]
+
+CONTROL_FORBIDDEN_PHRASES = [
+    "legal action",
+    "lawsuit",
+    "litigation",
+    "court",
+    "attorney",
+    "collection agency",
+    "collections",
+    "report to authorities",
+    "harass",
+    "threat",
+    "intimidate",
+]
+
+CONTROL_UNSUPPORTED_CLAIMS = [
+    "late fee",
+    "late fees",
+    "penalty",
+    "interest charge",
+    "finance charge",
+    "will be charged",
+    "will be assessed",
+    "sent to collections",
+    "automatic payment",
+    "automatically send",
+]
+
+CONTROL_TONE_CAPS_BY_RELATIONSHIP = {
+    "vip": "neutral",
+    "new": "neutral",
+    "recurring": "firm",
+    "risky": "firm",
+}
+
+CONTROL_TONE_CAPS_BY_DAYS_OVERDUE = [
+    (3, "soft"),
+    (7, "neutral"),
+]

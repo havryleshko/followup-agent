@@ -2,7 +2,13 @@ from __future__ import annotations
 from datetime import date
 from pathlib import Path
 from typing import Iterable, List, Optional
-from src.state import FollowupDecision, FollowupMessage, FollowupState, InvoiceRow
+from src.state import (
+    ControlResult,
+    FollowupDecision,
+    FollowupMessage,
+    FollowupState,
+    InvoiceRow,
+)
 
 
 def write_markdown_report(states: Iterable[FollowupState], output_path: str) -> str:
@@ -23,9 +29,10 @@ def write_markdown_report(states: Iterable[FollowupState], output_path: str) -> 
 
 def _render_summary_table(states: List[FollowupState]) -> List[str]:
     header = (
-        "| Invoice ID | Client | Amount | Days Overdue | Timing | Tone | Follow-up |"
+        "| Invoice ID | Client | Amount | Days Overdue | Timing | Tone | Follow-up | "
+        "Decision Control | Message Control |"
     )
-    separator = "| --- | --- | --- | --- | --- | --- | --- |"
+    separator = "| --- | --- | --- | --- | --- | --- | --- | --- | --- |"
     lines = ["## Summary", "", header, separator]
     for state in states:
         invoice = state["invoice_data"]
@@ -40,9 +47,12 @@ def _render_summary_table(states: List[FollowupState]) -> List[str]:
             else "unknown"
         )
         amount = _format_amount(invoice)
+        control_decision = _control_status(state.get("control_decision"))
+        control_message = _control_status(state.get("control_message"))
         lines.append(
             f"| {invoice.invoice_id} | {invoice.client_name} | {amount} | "
-            f"{invoice.days_overdue} | {timing} | {tone} | {required} |"
+            f"{invoice.days_overdue} | {timing} | {tone} | {required} | "
+            f"{control_decision} | {control_message} |"
         )
     return lines
 
@@ -51,6 +61,8 @@ def _render_invoice_section(state: FollowupState, index: int) -> List[str]:
     invoice = state["invoice_data"]
     decision = state.get("decision")
     message = state.get("message")
+    control_decision = state.get("control_decision")
+    control_message = state.get("control_message")
 
     lines = [f"## Invoice {index}: {invoice.invoice_id}"]
     lines.append("")
@@ -75,13 +87,24 @@ def _render_invoice_section(state: FollowupState, index: int) -> List[str]:
     else:
         lines.append("- Decision: unavailable")
     lines.append("")
+    lines.append("**Control Checks**")
+    if control_decision or control_message:
+        lines.extend(_render_control_block("Decision", control_decision))
+        lines.extend(_render_control_block("Message", control_message))
+    else:
+        lines.append("- Control: unavailable")
+    lines.append("")
     lines.append("**Message Draft**")
-    if message:
+    withhold_reason = _message_withhold_reason(
+        decision, control_decision, control_message
+    )
+    if message and not withhold_reason:
         lines.append(f"- Subject: {message.subject}")
         lines.append("")
         lines.append(message.body.strip())
     else:
-        lines.append("- Message: unavailable (not generated)")
+        reason = withhold_reason or "Message unavailable (not generated)."
+        lines.append(f"- Message: {reason}")
     lines.append("")
     lines.append("**Explanation**")
     if decision and decision.explanation:
@@ -116,3 +139,37 @@ def _suggested_send_date(timing: str) -> str:
     if timing == "skip":
         return "no follow-up"
     return "unknown"
+
+
+def _control_status(control: Optional[ControlResult]) -> str:
+    if control is None:
+        return "unknown"
+    return "pass" if control.passed else "fail"
+
+
+def _render_control_block(
+    label: str, control: Optional[ControlResult]
+) -> List[str]:
+    if control is None:
+        return [f"- {label} Control: unavailable"]
+    status = "pass" if control.passed else "fail"
+    if not control.violations:
+        return [f"- {label} Control: {status}"]
+    violations = "; ".join(control.violations)
+    return [f"- {label} Control: {status} ({violations})"]
+
+
+def _message_withhold_reason(
+    decision: Optional[FollowupDecision],
+    control_decision: Optional[ControlResult],
+    control_message: Optional[ControlResult],
+) -> Optional[str]:
+    if decision and (
+        not decision.followup_required or decision.recommended_timing == "skip"
+    ):
+        return "Follow-up not required."
+    if control_decision and not control_decision.passed:
+        return "Decision control failed; message withheld."
+    if control_message and not control_message.passed:
+        return "Message control failed; message withheld."
+    return None

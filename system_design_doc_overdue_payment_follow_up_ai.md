@@ -37,7 +37,7 @@ The system is designed as a **human-in-the-loop AI tool** that produces judgment
 ### Conceptual Flow
 
 ```
-Invoice Data → Context Extraction → Decision Logic → Message Generation → Control Agent → Output Artifact
+Invoice Data → Context Extraction → Decision Logic → Control (Decision) → Message Generation → Control (Message) → Output Artifact
 ```
 
 ### Execution Characteristics
@@ -117,6 +117,21 @@ The system is implemented using a **multi-agent LangGraph orchestration**.
 - Short explanation of reasoning
 
 ---
+
+### Agent 4: Control Agent
+
+**Responsibility:**
+- Enforce business safety policy and tone caps
+- Validate required fields and structured outputs
+- Flag forbidden language and unsupported claims
+
+**Inputs:**
+- Decision output (decision-stage control)
+- Message output (message-stage control)
+
+**Outputs:**
+- Pass/fail status
+- List of violations (reasons)
 
 ## 6. Prompt & Context Engineering Strategy
 
@@ -217,6 +232,8 @@ Complete visual architecture (single-run, human-in-the-loop)
 │    context                                    │
 │    decision                                   │
 │    message                                    │
+│    control_decision                           │
+│    control_message                            │
 │  }                                           │
 └───────────────────────────┬──────────────────┘
                             │
@@ -250,6 +267,19 @@ Complete visual architecture (single-run, human-in-the-loop)
                             │
                             ▼
 ┌──────────────────────────────────────────────┐
+│           CONTROL AGENT (DECISION)            │
+│                                              │
+│  Rule checks                                 │
+│                                              │
+│  Responsibilities:                            │
+│  - Required decision fields                   │
+│  - Tone caps                                  │
+│                                              │
+│  Writes → state.control_decision              │
+└───────────────────────────┬──────────────────┘
+                            │
+                            ▼
+┌──────────────────────────────────────────────┐
 │               MESSAGE AGENT                   │
 │                                              │
 │  Prompt + LLM                                 │
@@ -260,6 +290,19 @@ Complete visual architecture (single-run, human-in-the-loop)
 │  - Explain reasoning                          │
 │                                              │
 │  Writes → state.message                       │
+└───────────────────────────┬──────────────────┘
+                            │
+                            ▼
+┌──────────────────────────────────────────────┐
+│            CONTROL AGENT (MESSAGE)            │
+│                                              │
+│  Rule checks                                 │
+│                                              │
+│  Responsibilities:                            │
+│  - Forbidden language                         │
+│  - Unsupported claims                         │
+│                                              │
+│  Writes → state.control_message               │
 └───────────────────────────┬──────────────────┘
                             │
                             ▼
@@ -284,6 +327,7 @@ Where LLM is:
 Context Agent   → optional LLM
 Decision Agent  → LLM (plus rules)
 Message Agent   → LLM (primary)
+Control Agent   → rules only
 
 ## Repo structure:
 

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional, Literal
+from typing import List, Optional, Literal
 from datetime import date
 from typing_extensions import TypedDict
 
@@ -33,8 +33,16 @@ class FollowupMessage(BaseModel):
     body: str
     reasoning: str
 
+
+class ControlResult(BaseModel):
+    stage: Literal["decision", "message"]
+    passed: bool
+    violations: List[str] = Field(default_factory=list)
+
 class FollowupState(TypedDict, total=False):
     invoice_data: InvoiceRow
     context: InvoiceContext
     decision: FollowupDecision
     message: FollowupMessage
+    control_decision: ControlResult
+    control_message: ControlResult

@@ -23,3 +23,9 @@ Guidance:
 - Be specific about invoice and timing facts when available.
 - If timing is "wait_3_days" or "wait_7_days", you may still draft a polite reminder noting a planned follow-up.
 """
+
+CONTROL_POLICY_SUMMARY = """Control policy goals:
+- Enforce business-safe language (no threats, legal claims, or intimidation).
+- Keep tone within relationship and timing caps.
+- Avoid unsupported claims about fees, penalties, or automatic actions.
+- Ensure required fields are present before output."""
