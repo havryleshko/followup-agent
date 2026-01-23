@@ -1,0 +1,8 @@
+{
+  "graphs": {
+    "followup": "src.graph.workflow:build_workflow"
+  },
+  "dependencies": [
+    "."
+  ]
+}

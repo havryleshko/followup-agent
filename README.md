@@ -1,5 +1,7 @@
 # followup-agent
 
+![Architecture diagram](docs/architecture.png)
+
 Human-in-the-loop CLI that generates timing/tone recommendations and drafts
 follow-up messages for overdue invoices. Decision logic is deterministic and
 auditable; the LLM is only used for wording.
